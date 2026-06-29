@@ -1,65 +1,57 @@
-import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <main className="mx-auto flex min-h-screen w-full max-w-6xl items-center px-4 py-10 sm:px-6 lg:px-8">
+      <section className="grid w-full gap-8 overflow-hidden rounded-[36px] border border-[color:var(--color-border)] bg-[color:var(--color-surface)] p-8 shadow-[0_24px_80px_rgba(15,118,110,0.08)] lg:grid-cols-[1.25fr_0.9fr] lg:p-10">
+        <div className="space-y-6">
+          <span className="inline-flex rounded-full bg-[color:var(--color-accent-soft)] px-4 py-2 text-sm font-semibold text-[color:var(--color-accent-strong)]">
+            Tahap 2 sedang dibangun
+          </span>
+          <div className="space-y-4">
+            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-[color:var(--color-foreground)] sm:text-5xl">
+              Fondasi web absensi RFID sudah disiapkan untuk Next.js App Router
+              dan Neon PostgreSQL.
+            </h1>
+            <p className="max-w-2xl text-base leading-8 text-[color:var(--color-muted)] sm:text-lg">
+              Halaman ini menjadi pintu awal proyek Sistem Absensi Mahasiswa
+              RFID. Pada tahap kedua, fokusnya ada pada koneksi database,
+              autentikasi admin, dan dashboard yang mulai membaca data nyata.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-accent)] px-6 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-accent-strong)]"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
+              Login Admin
+            </Link>
             <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href="#cakupan"
+              className="inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] px-6 py-3 text-sm font-semibold text-[color:var(--color-foreground)] transition hover:bg-[color:var(--color-surface-muted)]"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              Lihat Cakupan Tahap 2
+            </a>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        <div
+          id="cakupan"
+          className="rounded-[28px] bg-[linear-gradient(160deg,rgba(15,118,110,0.12),rgba(255,255,255,0.92))] p-6"
+        >
+          <div className="rounded-[24px] border border-white/70 bg-white/85 p-6 shadow-sm backdrop-blur">
+            <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[color:var(--color-muted)]">
+              Cakupan saat ini
+            </p>
+            <ul className="mt-5 space-y-4 text-sm leading-7 text-[color:var(--color-foreground)]">
+              <li>Struktur App Router untuk area dashboard dan halaman modul.</li>
+              <li>Skema SQL Neon lengkap untuk entitas inti absensi RFID.</li>
+              <li>Koneksi database langsung dengan `@neondatabase/serverless`.</li>
+              <li>Autentikasi admin awal dan dashboard berbahasa Indonesia.</li>
+            </ul>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
