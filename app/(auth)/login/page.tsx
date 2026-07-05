@@ -12,6 +12,8 @@ function AcademicLoginMark() {
           src="/logo.png"
           alt="Logo Sistem Akses Akademik"
           priority
+          width={120}
+          height={120}
           className="h-full w-full object-cover"
         />
       </div>

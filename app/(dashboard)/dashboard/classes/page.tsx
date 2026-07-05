@@ -1,6 +1,5 @@
-import { ModulePlaceholder } from "@/components/dashboard/module-placeholder";
-import { modulePlaceholders } from "@/lib/dashboard-config";
+﻿import { ClassesPage } from "@/components/classes/classes-page";
 
-export default function ClassesPage() {
-  return <ModulePlaceholder content={modulePlaceholders.classes} />;
+export default function ClassesRoutePage() {
+  return <ClassesPage />;
 }

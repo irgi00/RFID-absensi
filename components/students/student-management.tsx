@@ -208,7 +208,7 @@ function ModalShell({
               {title}
             </h2>
             {description ? (
-              <p className="mt-2 text-sm leading-7 text-[color:var(--color-muted)]">
+              <p className="mt-2 text-sm leading-7 text-slate-700">
                 {description}
               </p>
             ) : null}
@@ -216,7 +216,7 @@ function ModalShell({
           <button
             type="button"
             onClick={onClose}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white text-[color:var(--color-muted)] transition hover:bg-[color:var(--color-surface-muted)]"
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white text-slate-700 transition hover:bg-[color:var(--color-surface-muted)]"
             aria-label="Tutup modal"
           >
             x
@@ -274,12 +274,12 @@ function StudentSummaryCard({
     >
       <div className="flex items-center gap-3">
         <span className={`h-3 w-3 rounded-full ${toneClasses[tone].accent}`} />
-        <p className="text-sm font-medium text-[color:var(--color-muted)]">{label}</p>
+        <p className="text-sm font-medium text-slate-700">{label}</p>
       </div>
       <p className="mt-4 text-[2rem] font-semibold tracking-tight text-[color:var(--color-foreground)]">
         {formatNumber.format(value)}
       </p>
-      <p className="mt-2 text-sm leading-6 text-[color:var(--color-muted)]">{hint}</p>
+      <p className="mt-2 text-sm leading-6 text-slate-700">{hint}</p>
     </article>
   );
 }
@@ -293,11 +293,11 @@ function FormHint({
 }) {
   const toneClasses: Record<"neutral" | "warning" | "danger", string> = {
     neutral:
-      "border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] text-[color:var(--color-muted)]",
+      "border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] text-slate-700",
     warning:
-      "border-[rgba(217,119,6,0.18)] bg-[color:var(--color-warning-soft)] text-[color:var(--color-warning)]",
+      "border-[rgba(217,119,6,0.18)] bg-[color:var(--color-warning-soft)] text-amber-700",
     danger:
-      "border-[rgba(220,38,38,0.18)] bg-[color:var(--color-danger-soft)] text-[color:var(--color-danger)]",
+      "border-[rgba(220,38,38,0.18)] bg-[color:var(--color-danger-soft)] text-red-700",
   };
 
   return (
@@ -312,7 +312,7 @@ function FieldError({ message }: { message?: string }) {
     return null;
   }
 
-  return <p className="mt-2 text-sm text-[color:var(--color-danger)]">{message}</p>;
+  return <p className="mt-2 text-sm text-red-700">{message}</p>;
 }
 function StudentFormModal({
   open,
@@ -399,7 +399,7 @@ function StudentFormModal({
             type="submit"
             form="student-form"
             disabled={isSubmitting || classOptions.length === 0}
-            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
           >
             {isSubmitting ? "Menyimpan..." : mode === "create" ? "Simpan Mahasiswa" : "Simpan Perubahan"}
           </button>
@@ -485,7 +485,7 @@ function StudentFormModal({
             <span className="text-sm font-semibold text-[color:var(--color-foreground)]">
               Prodi / Jurusan
             </span>
-            <div className="mt-2 rounded-[1rem] border border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] px-4 py-3 text-sm text-[color:var(--color-muted)]">
+            <div className="mt-2 rounded-[1rem] border border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] px-4 py-3 text-sm text-slate-700">
               {selectedClass?.studyProgram?.trim() || "Mengikuti data kelas yang dipilih."}
             </div>
           </div>
@@ -583,7 +583,7 @@ function StudentCardModal({
             type="submit"
             form="student-card-form"
             disabled={isSubmitting || !student}
-            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
           >
             {isSubmitting
               ? "Menyimpan..."
@@ -598,16 +598,16 @@ function StudentCardModal({
         <form id="student-card-form" className="space-y-5" onSubmit={handleSubmit}>
           <div className="grid gap-4 rounded-[1.5rem] bg-[color:var(--color-surface-muted)] p-5 md:grid-cols-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
                 Mahasiswa
               </p>
               <p className="mt-2 text-sm font-semibold text-[color:var(--color-foreground)]">
                 {student.fullName}
               </p>
-              <p className="mt-1 text-sm text-[color:var(--color-muted)]">{student.nim}</p>
+              <p className="mt-1 text-sm text-slate-700">{student.nim}</p>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
                 Status kartu saat ini
               </p>
               <div className="mt-2">
@@ -615,7 +615,7 @@ function StudentCardModal({
               </div>
             </div>
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
                 UID aktif
               </p>
               <p className="mt-2 text-sm font-semibold text-[color:var(--color-foreground)]">
@@ -770,7 +770,7 @@ function DetailItem({
 }) {
   return (
     <div>
-      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
+      <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
         {label}
       </p>
       {valueNode ? (
@@ -939,7 +939,7 @@ export function StudentManagement({
           <p className="font-semibold text-[color:var(--color-foreground)]">
             {student.className}
           </p>
-          <p className="mt-1 text-xs text-[color:var(--color-muted)]">{student.classCode}</p>
+          <p className="mt-1 text-xs text-slate-700">{student.classCode}</p>
         </div>,
         <div key="studyProgram">
           <p className="text-sm text-[color:var(--color-foreground)]">
@@ -948,7 +948,7 @@ export function StudentManagement({
         </div>,
         <div key="card">
           <StatusBadge label={cardBadge.label} tone={cardBadge.tone} />
-          <p className="mt-2 text-xs text-[color:var(--color-muted)]">
+          <p className="mt-2 text-xs text-slate-700">
             UID: {student.cardUid ?? "-"}
           </p>
         </div>,
@@ -983,7 +983,7 @@ export function StudentManagement({
             type="button"
             onClick={() => openDeactivateModal(student)}
             disabled={!student.isActive}
-            className="inline-flex items-center rounded-full border border-[rgba(220,38,38,0.12)] bg-[color:var(--color-danger-soft)] px-3 py-1.5 text-xs font-semibold text-[color:var(--color-danger)] transition hover:bg-[rgba(254,226,226,0.78)] disabled:cursor-not-allowed disabled:opacity-50"
+            className="inline-flex items-center rounded-full border border-[rgba(220,38,38,0.12)] bg-[color:var(--color-danger-soft)] px-3 py-1.5 text-xs font-semibold text-red-700 transition hover:bg-[rgba(254,226,226,0.78)] disabled:cursor-not-allowed disabled:opacity-50"
           >
             Nonaktifkan
           </button>
@@ -999,7 +999,7 @@ export function StudentManagement({
             <h1 className="text-[1.55rem] font-semibold tracking-tight text-[color:var(--color-foreground)]">
               Data Mahasiswa
             </h1>
-            <p className="mt-2 text-sm leading-7 text-[color:var(--color-muted)]">
+            <p className="mt-2 text-sm leading-7 text-slate-700">
               Kelola identitas mahasiswa dan status kartu RFID.
             </p>
           </div>
@@ -1007,7 +1007,7 @@ export function StudentManagement({
             type="button"
             onClick={openCreateModal}
             disabled={!hasClassData}
-            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
           >
             + Tambah Mahasiswa
           </button>
@@ -1052,7 +1052,7 @@ export function StudentManagement({
           }}
         >
           <label className="block">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
               Cari mahasiswa
             </span>
             <input
@@ -1069,7 +1069,7 @@ export function StudentManagement({
           </label>
 
           <label className="block">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
               Status mahasiswa
             </span>
             <select
@@ -1089,7 +1089,7 @@ export function StudentManagement({
           </label>
 
           <label className="block">
-            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
+            <span className="text-xs font-semibold uppercase tracking-[0.18em] text-slate-700">
               Status kartu RFID
             </span>
             <select
@@ -1111,7 +1111,7 @@ export function StudentManagement({
           <button
             type="submit"
             disabled={isLoadingTable}
-            className="mt-auto inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-auto inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
           >
             {isLoadingTable ? "Memuat..." : "Terapkan Filter"}
           </button>
@@ -1167,7 +1167,7 @@ export function StudentManagement({
           emptyMessage="Tidak ada mahasiswa yang cocok dengan filter saat ini."
           actions={
             <div className="flex items-center gap-3">
-              <span className="text-sm text-[color:var(--color-muted)]">
+              <span className="text-sm text-slate-700">
                 Halaman {tableData.pagination.page} dari {tableData.pagination.totalPages}
               </span>
               <button
@@ -1179,7 +1179,7 @@ export function StudentManagement({
                   })
                 }
                 disabled={filters.page <= 1 || isLoadingTable}
-                className="inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-semibold text-[color:var(--color-foreground)] transition hover:bg-[color:var(--color-surface-muted)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-semibold text-[color:var(--color-foreground)] transition hover:bg-[color:var(--color-surface-muted)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
               >
                 Sebelumnya
               </button>
@@ -1194,7 +1194,7 @@ export function StudentManagement({
                 disabled={
                   filters.page >= tableData.pagination.totalPages || isLoadingTable
                 }
-                className="inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-semibold text-[color:var(--color-foreground)] transition hover:bg-[color:var(--color-surface-muted)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white px-4 py-2 text-sm font-semibold text-[color:var(--color-foreground)] transition hover:bg-[color:var(--color-surface-muted)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
               >
                 Berikutnya
               </button>

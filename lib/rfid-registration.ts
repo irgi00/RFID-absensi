@@ -141,29 +141,45 @@ export async function findRegistrationStudentByNim(nim: string) {
 export async function getPreferredRegistrationDevice(deviceCode?: string) {
   const preferredCode = deviceCode?.trim() ?? "";
 
-  const rows = (await sql`
-    SELECT
-      devices.id,
-      devices.device_code AS "deviceCode",
-      devices.name AS "deviceName",
-      rooms.name AS "roomName",
-      rooms.code AS "roomCode",
-      devices.is_active AS "isActive",
-      devices.last_seen_at AS "lastSeenAt"
-    FROM devices
-    LEFT JOIN rooms
-      ON rooms.id = devices.room_id
-    WHERE (${preferredCode} = '' OR devices.device_code = ${preferredCode})
-    ORDER BY devices.is_active DESC, devices.last_seen_at DESC NULLS LAST, devices.name ASC
-    LIMIT 1
-  `) as RegistrationDeviceRow[];
+  let rows: RegistrationDeviceRow[];
+
+  if (preferredCode) {
+    rows = (await sql`
+      SELECT
+        devices.id,
+        devices.device_code AS "deviceCode",
+        devices.name AS "deviceName",
+        rooms.name AS "roomName",
+        rooms.code AS "roomCode",
+        devices.is_active AS "isActive",
+        devices.last_seen_at AS "lastSeenAt"
+      FROM devices
+      LEFT JOIN rooms
+        ON rooms.id = devices.room_id
+      WHERE devices.device_code = ${preferredCode}
+      ORDER BY devices.is_active DESC, devices.last_seen_at DESC NULLS LAST, devices.name ASC
+      LIMIT 1
+    `) as RegistrationDeviceRow[];
+  } else {
+    rows = (await sql`
+      SELECT
+        devices.id,
+        devices.device_code AS "deviceCode",
+        devices.name AS "deviceName",
+        rooms.name AS "roomName",
+        rooms.code AS "roomCode",
+        devices.is_active AS "isActive",
+        devices.last_seen_at AS "lastSeenAt"
+      FROM devices
+      LEFT JOIN rooms
+        ON rooms.id = devices.room_id
+      ORDER BY devices.is_active DESC, devices.last_seen_at DESC NULLS LAST, devices.name ASC
+      LIMIT 1
+    `) as RegistrationDeviceRow[];
+  }
 
   if (rows[0]) {
     return mapRegistrationDevice(rows[0]);
-  }
-
-  if (preferredCode) {
-    return null;
   }
 
   return null;
@@ -178,41 +194,149 @@ export async function findLatestRegistrationScan(input?: {
   const since =
     parsedSince && !Number.isNaN(parsedSince.getTime()) ? parsedSince.toISOString() : null;
 
-  const rows = (await sql`
-    SELECT
-      logs.id,
-      logs.uid,
-      logs.scanned_at AS "scannedAt",
-      logs.device_code AS "deviceCode",
-      devices.name AS "deviceName",
-      rooms.name AS "roomName",
-      rooms.code AS "roomCode",
-      active_owner.student_id AS "activeCardOwnerStudentId",
-      active_owner.student_name AS "activeCardOwnerStudentName",
-      active_owner.student_nim AS "activeCardOwnerStudentNim"
-    FROM rfid_scan_logs logs
-    LEFT JOIN devices
-      ON devices.id = logs.device_id
-    LEFT JOIN rooms
-      ON rooms.id = logs.room_id
-    LEFT JOIN LATERAL (
+  let rows: RegistrationScanRow[];
+
+  if (deviceCode && since) {
+    rows = (await sql`
       SELECT
-        rfid_cards.student_id,
-        students.full_name AS student_name,
-        students.nim AS student_nim
-      FROM rfid_cards
-      INNER JOIN students
-        ON students.id = rfid_cards.student_id
-      WHERE rfid_cards.uid = logs.uid
-        AND rfid_cards.status = 'ACTIVE'
+        logs.id,
+        logs.uid,
+        logs.scanned_at AS "scannedAt",
+        logs.device_code AS "deviceCode",
+        devices.name AS "deviceName",
+        rooms.name AS "roomName",
+        rooms.code AS "roomCode",
+        active_owner.student_id AS "activeCardOwnerStudentId",
+        active_owner.student_name AS "activeCardOwnerStudentName",
+        active_owner.student_nim AS "activeCardOwnerStudentNim"
+      FROM rfid_scan_logs logs
+      LEFT JOIN devices
+        ON devices.id = logs.device_id
+      LEFT JOIN rooms
+        ON rooms.id = logs.room_id
+      LEFT JOIN LATERAL (
+        SELECT
+          rfid_cards.student_id,
+          students.full_name AS student_name,
+          students.nim AS student_nim
+        FROM rfid_cards
+        INNER JOIN students
+          ON students.id = rfid_cards.student_id
+        WHERE rfid_cards.uid = logs.uid
+          AND rfid_cards.status = 'ACTIVE'
+        LIMIT 1
+      ) active_owner
+        ON TRUE
+      WHERE logs.device_code = ${deviceCode}
+        AND logs.scanned_at >= ${since}
+      ORDER BY logs.scanned_at DESC
       LIMIT 1
-    ) active_owner
-      ON TRUE
-    WHERE (${deviceCode} = '' OR logs.device_code = ${deviceCode})
-      AND (${since} IS NULL OR logs.scanned_at >= ${since})
-    ORDER BY logs.scanned_at DESC
-    LIMIT 1
-  `) as RegistrationScanRow[];
+    `) as RegistrationScanRow[];
+  } else if (deviceCode) {
+    rows = (await sql`
+      SELECT
+        logs.id,
+        logs.uid,
+        logs.scanned_at AS "scannedAt",
+        logs.device_code AS "deviceCode",
+        devices.name AS "deviceName",
+        rooms.name AS "roomName",
+        rooms.code AS "roomCode",
+        active_owner.student_id AS "activeCardOwnerStudentId",
+        active_owner.student_name AS "activeCardOwnerStudentName",
+        active_owner.student_nim AS "activeCardOwnerStudentNim"
+      FROM rfid_scan_logs logs
+      LEFT JOIN devices
+        ON devices.id = logs.device_id
+      LEFT JOIN rooms
+        ON rooms.id = logs.room_id
+      LEFT JOIN LATERAL (
+        SELECT
+          rfid_cards.student_id,
+          students.full_name AS student_name,
+          students.nim AS student_nim
+        FROM rfid_cards
+        INNER JOIN students
+          ON students.id = rfid_cards.student_id
+        WHERE rfid_cards.uid = logs.uid
+          AND rfid_cards.status = 'ACTIVE'
+        LIMIT 1
+      ) active_owner
+        ON TRUE
+      WHERE logs.device_code = ${deviceCode}
+      ORDER BY logs.scanned_at DESC
+      LIMIT 1
+    `) as RegistrationScanRow[];
+  } else if (since) {
+    rows = (await sql`
+      SELECT
+        logs.id,
+        logs.uid,
+        logs.scanned_at AS "scannedAt",
+        logs.device_code AS "deviceCode",
+        devices.name AS "deviceName",
+        rooms.name AS "roomName",
+        rooms.code AS "roomCode",
+        active_owner.student_id AS "activeCardOwnerStudentId",
+        active_owner.student_name AS "activeCardOwnerStudentName",
+        active_owner.student_nim AS "activeCardOwnerStudentNim"
+      FROM rfid_scan_logs logs
+      LEFT JOIN devices
+        ON devices.id = logs.device_id
+      LEFT JOIN rooms
+        ON rooms.id = logs.room_id
+      LEFT JOIN LATERAL (
+        SELECT
+          rfid_cards.student_id,
+          students.full_name AS student_name,
+          students.nim AS student_nim
+        FROM rfid_cards
+        INNER JOIN students
+          ON students.id = rfid_cards.student_id
+        WHERE rfid_cards.uid = logs.uid
+          AND rfid_cards.status = 'ACTIVE'
+        LIMIT 1
+      ) active_owner
+        ON TRUE
+      WHERE logs.scanned_at >= ${since}
+      ORDER BY logs.scanned_at DESC
+      LIMIT 1
+    `) as RegistrationScanRow[];
+  } else {
+    rows = (await sql`
+      SELECT
+        logs.id,
+        logs.uid,
+        logs.scanned_at AS "scannedAt",
+        logs.device_code AS "deviceCode",
+        devices.name AS "deviceName",
+        rooms.name AS "roomName",
+        rooms.code AS "roomCode",
+        active_owner.student_id AS "activeCardOwnerStudentId",
+        active_owner.student_name AS "activeCardOwnerStudentName",
+        active_owner.student_nim AS "activeCardOwnerStudentNim"
+      FROM rfid_scan_logs logs
+      LEFT JOIN devices
+        ON devices.id = logs.device_id
+      LEFT JOIN rooms
+        ON rooms.id = logs.room_id
+      LEFT JOIN LATERAL (
+        SELECT
+          rfid_cards.student_id,
+          students.full_name AS student_name,
+          students.nim AS student_nim
+        FROM rfid_cards
+        INNER JOIN students
+          ON students.id = rfid_cards.student_id
+        WHERE rfid_cards.uid = logs.uid
+          AND rfid_cards.status = 'ACTIVE'
+        LIMIT 1
+      ) active_owner
+        ON TRUE
+      ORDER BY logs.scanned_at DESC
+      LIMIT 1
+    `) as RegistrationScanRow[];
+  }
 
   const row = rows[0];
 

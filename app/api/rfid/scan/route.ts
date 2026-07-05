@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
   if (!result.ok) {
     return NextResponse.json(
-      { success: false, message: result.message },
+      { success: false, code: result.code, message: result.message },
       { status: result.status },
     );
   }
@@ -38,6 +38,8 @@ export async function POST(request: Request) {
   return NextResponse.json(
     {
       success: true,
+      code: result.code,
+      message: result.message,
       student: result.student,
       status: result.responseStatus,
     },

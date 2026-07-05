@@ -54,7 +54,13 @@ export function AttendanceOverview({
   pageData: AttendancePageData;
 }) {
   const summaryCards = createSummaryCards(pageData.summary);
-  const exportAvailable = false;
+  const exportAvailable = pageData.summary.hasAnyScanData;
+  const exportParams = new URLSearchParams();
+  if (filters.startDate) exportParams.set("startDate", filters.startDate);
+  if (filters.endDate) exportParams.set("endDate", filters.endDate);
+  if (filters.search) exportParams.set("search", filters.search);
+  if (filters.status && filters.status !== "ALL") exportParams.set("status", filters.status);
+  const exportUrl = `/api/admin/attendance/export?${exportParams.toString()}`;
 
   return (
     <section className="space-y-5">
@@ -73,12 +79,12 @@ export function AttendanceOverview({
           </div>
 
           {exportAvailable ? (
-            <Link
-              href="/dashboard/attendance/export"
+            <a
+              href={exportUrl}
               className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)]"
             >
               Export CSV
-            </Link>
+            </a>
           ) : (
             <button
               type="button"

@@ -3,6 +3,7 @@ import "server-only";
 import { z } from "zod";
 
 import { sql } from "@/lib/db";
+import { ensureCurrentAttendanceSession } from "./attendance-session-manager";
 
 export const rfidRegisterPayloadSchema = z.object({
   studentId: z.uuid("studentId harus berupa UUID yang valid."),
@@ -47,7 +48,7 @@ type DeviceRow = {
   isActive: boolean;
 };
 
-type SessionRow = {
+export type SessionRow = {
   sessionId: string;
   scheduleId: string;
   scheduleClassId: string;
@@ -72,32 +73,49 @@ type ScanLogParams = {
   attendanceRecordId?: string | null;
   logStatus: "SUCCESS" | "REJECTED" | "UNREGISTERED" | "DUPLICATE" | "ERROR";
   responseCode:
-    | "PRESENT"
-    | "LATE"
-    | "ALREADY_ATTENDED"
-    | "CARD_NOT_REGISTERED"
-    | "CARD_INACTIVE"
-    | "NO_ACTIVE_SCHEDULE"
-    | "NOT_YOUR_CLASS"
-    | "ATTENDANCE_CLOSED"
-    | "DEVICE_NOT_REGISTERED"
-    | "SERVER_ERROR";
+  | "PRESENT"
+  | "LATE"
+  | "ALREADY_ATTENDED"
+  | "CARD_NOT_REGISTERED"
+  | "CARD_INACTIVE"
+  | "NO_ACTIVE_SCHEDULE"
+  | "NOT_YOUR_CLASS"
+  | "ATTENDANCE_CLOSED"
+  | "DEVICE_NOT_REGISTERED"
+  | "SERVER_ERROR";
   message: string;
   rawPayload: Record<string, unknown>;
 };
 
+type RfidResponseCode =
+  | "ATTENDANCE_RECORDED"
+  | "ATTENDANCE_ALREADY_RECORDED"
+  | "CARD_REGISTERED"
+  | "CARD_ALREADY_ASSIGNED"
+  | "CARD_NOT_REGISTERED"
+  | "CARD_INACTIVE"
+  | "STUDENT_NOT_FOUND"
+  | "DEVICE_NOT_REGISTERED"
+  | "NOT_YOUR_CLASS"
+  | "NO_ACTIVE_SCHEDULE"
+  | "ATTENDANCE_CLOSED"
+  | "FAILED_TO_REGISTER_CARD"
+  | "INTERNAL_SERVER_ERROR";
+
 type RegisterCardResult =
-  | { ok: true; status: 200; message: string }
-  | { ok: false; status: 404 | 409 | 500; message: string };
+  | { ok: true; status: 200; code: RfidResponseCode; message: string }
+  | { ok: false; status: 404 | 409 | 500; code: RfidResponseCode; message: string };
 
 type ScanCardResult =
   | {
-      ok: true;
-      status: 200;
-      student: { id: string; nim: string; name: string };
-      responseStatus: "HADIR" | "TERLAMBAT";
-    }
-  | { ok: false; status: 404 | 409 | 422 | 500; message: string };
+    ok: true;
+    status: 200;
+    code: RfidResponseCode;
+    message: string;
+    student: { id: string; nim: string; name: string };
+    responseStatus: "HADIR" | "TERLAMBAT";
+  }
+  | { ok: false; status: 404 | 409 | 422 | 500; code: RfidResponseCode; message: string };
 
 async function findStudentById(studentId: string) {
   const rows = (await sql`
@@ -161,28 +179,8 @@ async function findDeviceByCode(deviceCode: string) {
   return rows[0] ?? null;
 }
 
-async function findActiveSessionForDeviceRoom(device: DeviceRow, student: StudentRow) {
-  const rows = (await sql`
-    SELECT
-      attendance_sessions.id AS "sessionId",
-      attendance_sessions.schedule_id AS "scheduleId",
-      class_schedules.class_id AS "scheduleClassId",
-      attendance_sessions.status,
-      attendance_sessions.on_time_deadline_at AS "onTimeDeadlineAt",
-      attendance_sessions.late_deadline_at AS "lateDeadlineAt"
-    FROM attendance_sessions
-    INNER JOIN class_schedules
-      ON class_schedules.id = attendance_sessions.schedule_id
-    WHERE class_schedules.room_id = ${device.roomId}
-      AND class_schedules.is_active = TRUE
-      AND attendance_sessions.status = 'ACTIVE'
-      AND attendance_sessions.start_at <= NOW()
-      AND attendance_sessions.end_at >= NOW()
-    ORDER BY attendance_sessions.start_at DESC
-    LIMIT 1
-  `) as SessionRow[];
-
-  const session = rows[0] ?? null;
+async function findCurrentSessionForDeviceRoom(device: DeviceRow, student: StudentRow) {
+  const session = await ensureCurrentAttendanceSession(device.roomId);
 
   if (!session) {
     return { session: null, reason: "NO_ACTIVE_SCHEDULE" as const };
@@ -252,6 +250,7 @@ export async function registerRfidCard(
       return {
         ok: false,
         status: 404,
+        code: "STUDENT_NOT_FOUND",
         message: "Student not found",
       };
     }
@@ -262,6 +261,7 @@ export async function registerRfidCard(
       return {
         ok: false,
         status: 409,
+        code: "CARD_ALREADY_ASSIGNED",
         message: "RFID UID already assigned to another student",
       };
     }
@@ -272,6 +272,7 @@ export async function registerRfidCard(
       return {
         ok: true,
         status: 200,
+        code: "CARD_REGISTERED",
         message: "RFID card registered successfully",
       };
     }
@@ -306,6 +307,7 @@ export async function registerRfidCard(
     return {
       ok: true,
       status: 200,
+      code: "CARD_REGISTERED",
       message: "RFID card registered successfully",
     };
   } catch (error) {
@@ -314,6 +316,7 @@ export async function registerRfidCard(
     return {
       ok: false,
       status: 500,
+      code: "FAILED_TO_REGISTER_CARD",
       message: "Failed to register RFID card",
     };
   }
@@ -343,6 +346,7 @@ export async function processRfidScan(
       return {
         ok: false,
         status: 404,
+        code: "DEVICE_NOT_REGISTERED",
         message: "Device not registered",
       };
     }
@@ -364,6 +368,7 @@ export async function processRfidScan(
       return {
         ok: false,
         status: 404,
+        code: "CARD_NOT_REGISTERED",
         message: "RFID card not registered",
       };
     }
@@ -387,11 +392,12 @@ export async function processRfidScan(
       return {
         ok: false,
         status: 422,
+        code: "CARD_INACTIVE",
         message: "Student is not active",
       };
     }
 
-    const sessionLookup = await findActiveSessionForDeviceRoom(device, student);
+    const sessionLookup = await findCurrentSessionForDeviceRoom(device, student);
 
     if (!sessionLookup.session) {
       await insertScanLog({
@@ -410,6 +416,7 @@ export async function processRfidScan(
       return {
         ok: false,
         status: 422,
+        code: "NO_ACTIVE_SCHEDULE",
         message: "No active attendance session for this device",
       };
     }
@@ -433,6 +440,7 @@ export async function processRfidScan(
       return {
         ok: false,
         status: 409,
+        code: "NOT_YOUR_CLASS",
         message: "Student is not assigned to the active class",
       };
     }
@@ -441,6 +449,13 @@ export async function processRfidScan(
     const now = new Date();
     const lateDeadlineAt = new Date(session.lateDeadlineAt);
     const onTimeDeadlineAt = new Date(session.onTimeDeadlineAt);
+
+    console.log("=== Attendance Time Debug ===");
+    console.log("Now              :", now.toISOString());
+    console.log("On Time Deadline :", onTimeDeadlineAt.toISOString());
+    console.log("Late Deadline    :", lateDeadlineAt.toISOString());
+    console.log("Session Status   :", session.status);
+    console.log("============================");
 
     if (now > lateDeadlineAt || session.status === "CLOSED") {
       await insertScanLog({
@@ -461,6 +476,7 @@ export async function processRfidScan(
       return {
         ok: false,
         status: 422,
+        code: "ATTENDANCE_CLOSED",
         message: "Attendance session is closed",
       };
     }
@@ -487,6 +503,7 @@ export async function processRfidScan(
       return {
         ok: false,
         status: 409,
+        code: "ATTENDANCE_ALREADY_RECORDED",
         message: "Attendance already recorded",
       };
     }
@@ -537,6 +554,8 @@ export async function processRfidScan(
     return {
       ok: true,
       status: 200,
+      code: "ATTENDANCE_RECORDED",
+      message: "Attendance recorded successfully",
       student: {
         id: student.id,
         nim: student.nim,
@@ -563,6 +582,7 @@ export async function processRfidScan(
     return {
       ok: false,
       status: 500,
+      code: "INTERNAL_SERVER_ERROR",
       message: "Internal server error",
     };
   }

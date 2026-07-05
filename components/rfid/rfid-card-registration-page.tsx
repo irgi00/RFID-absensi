@@ -130,13 +130,13 @@ function DetailItem({
 }) {
   return (
     <div className="rounded-[1.15rem] border border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] px-4 py-3.5">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--color-muted)]">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-700">
         {label}
       </p>
       <p className="mt-2 text-sm font-semibold text-[color:var(--color-foreground)]">
         {value}
       </p>
-      {hint ? <p className="mt-1 text-xs text-[color:var(--color-muted)]">{hint}</p> : null}
+      {hint ? <p className="mt-1 text-xs text-slate-700">{hint}</p> : null}
     </div>
   );
 }
@@ -150,13 +150,13 @@ function InlineNotice({
 }) {
   const toneClasses: Record<"neutral" | "warning" | "danger" | "success", string> = {
     neutral:
-      "border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] text-[color:var(--color-muted)]",
+      "border-[color:var(--color-border)] bg-[color:var(--color-surface-muted)] text-slate-700",
     warning:
-      "border-[rgba(217,119,6,0.16)] bg-[color:var(--color-warning-soft)] text-[color:var(--color-warning)]",
+      "border-[rgba(217,119,6,0.16)] bg-[color:var(--color-warning-soft)] text-amber-700",
     danger:
-      "border-[rgba(220,38,38,0.16)] bg-[color:var(--color-danger-soft)] text-[color:var(--color-danger)]",
+      "border-[rgba(220,38,38,0.16)] bg-[color:var(--color-danger-soft)] text-red-700",
     success:
-      "border-[rgba(5,150,105,0.16)] bg-[color:var(--color-success-soft)] text-[color:var(--color-success)]",
+      "border-[rgba(5,150,105,0.16)] bg-[color:var(--color-success-soft)] text-emerald-700",
   };
 
   return (
@@ -186,8 +186,8 @@ function FloatingToast({ notice }: { notice: NoticeState }) {
             className={[
               "mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full",
               notice.tone === "success"
-                ? "bg-[color:var(--color-success-soft)] text-[color:var(--color-success)]"
-                : "bg-[color:var(--color-danger-soft)] text-[color:var(--color-danger)]",
+                ? "bg-[color:var(--color-success-soft)] text-emerald-700"
+                : "bg-[color:var(--color-danger-soft)] text-red-700",
             ].join(" ")}
           >
             {notice.tone === "success" ? (
@@ -222,7 +222,7 @@ function FloatingToast({ notice }: { notice: NoticeState }) {
             <p className="text-sm font-semibold">
               {notice.tone === "success" ? "Berhasil" : "Perlu perhatian"}
             </p>
-            <p className="mt-1 text-sm leading-6 text-[color:var(--color-muted)]">
+            <p className="mt-1 text-sm leading-6 text-slate-700">
               {notice.message}
             </p>
           </div>
@@ -444,13 +444,13 @@ export function RfidCardRegistrationPage({
 
       <section className="space-y-5">
         <div className="space-y-2 px-1">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[color:var(--color-muted)]">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-slate-700">
             Dashboard / Kartu RFID
           </p>
           <h1 className="text-[1.55rem] font-semibold tracking-tight text-[color:var(--color-foreground)] sm:text-[1.8rem]">
             Daftarkan Kartu RFID
           </h1>
-          <p className="max-w-2xl text-sm leading-7 text-[color:var(--color-muted)]">
+          <p className="max-w-2xl text-sm leading-7 text-slate-700">
             Hubungkan kartu RFID dengan data mahasiswa yang terdaftar.
           </p>
         </div>
@@ -463,7 +463,7 @@ export function RfidCardRegistrationPage({
                   <h2 className="text-lg font-semibold text-[color:var(--color-foreground)]">
                     Informasi Mahasiswa
                   </h2>
-                  <p className="mt-1 text-sm leading-6 text-[color:var(--color-muted)]">
+                  <p className="mt-1 text-sm leading-6 text-slate-700">
                     Cari mahasiswa berdasarkan NIM sebelum menghubungkan kartu.
                   </p>
                 </div>
@@ -488,7 +488,7 @@ export function RfidCardRegistrationPage({
                 <button
                   type="submit"
                   disabled={isSearching || !nim.trim()}
-                  className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
                 >
                   {isSearching ? "Mencari..." : "Cari"}
                 </button>
@@ -511,7 +511,7 @@ export function RfidCardRegistrationPage({
                         <p className="truncate text-lg font-semibold text-[color:var(--color-foreground)]">
                           {selectedStudent.fullName}
                         </p>
-                        <p className="mt-1 text-sm text-[color:var(--color-muted)]">
+                        <p className="mt-1 text-sm text-slate-700">
                           NIM {selectedStudent.nim}
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -555,13 +555,13 @@ export function RfidCardRegistrationPage({
                   ) : null}
                 </div>
               ) : (
-                <div className="mt-5 rounded-[1.3rem] border border-dashed border-[color:var(--color-border-strong)] bg-[color:var(--color-surface-muted)] px-4 py-5 text-sm leading-6 text-[color:var(--color-muted)]">
+                <div className="mt-5 rounded-[1.3rem] border border-dashed border-[color:var(--color-border-strong)] bg-[color:var(--color-surface-muted)] px-4 py-5 text-sm leading-6 text-slate-700">
                   Cari mahasiswa terlebih dahulu untuk memulai pendaftaran kartu.
                 </div>
               )}
             </article>
 
-            <p className="px-1 text-sm leading-6 text-[color:var(--color-muted)]">
+            <p className="px-1 text-sm leading-6 text-slate-700">
               Satu kartu RFID aktif hanya dapat terhubung dengan satu mahasiswa.
             </p>
           </section>
@@ -573,7 +573,7 @@ export function RfidCardRegistrationPage({
                   <h2 className="text-lg font-semibold text-[color:var(--color-foreground)]">
                     Panel Pemindaian Kartu
                   </h2>
-                  <p className="mt-1 text-sm leading-6 text-[color:var(--color-muted)]">
+                  <p className="mt-1 text-sm leading-6 text-slate-700">
                     Area ini menunggu UID kartu RFID masuk dari perangkat pembaca.
                   </p>
                 </div>
@@ -597,19 +597,19 @@ export function RfidCardRegistrationPage({
                 <div className="relative flex min-h-[440px] flex-col items-center justify-center text-center">
                   {!selectedStudent ? (
                     <>
-                      <div className="flex h-28 w-28 items-center justify-center rounded-full border border-dashed border-[color:var(--color-border-strong)] bg-white text-[color:var(--color-muted)] shadow-[inset_0_0_0_12px_rgba(241,245,249,0.6)]">
+                      <div className="flex h-28 w-28 items-center justify-center rounded-full border border-dashed border-[color:var(--color-border-strong)] bg-white text-slate-700 shadow-[inset_0_0_0_12px_rgba(241,245,249,0.6)]">
                         <DashboardIcon name="rfid-card" className="h-10 w-10" />
                       </div>
                       <h3 className="mt-8 text-[1.55rem] font-semibold tracking-tight text-[color:var(--color-foreground)]">
                         Pilih Mahasiswa Terlebih Dahulu
                       </h3>
-                      <p className="mt-3 max-w-md text-sm leading-7 text-[color:var(--color-muted)]">
+                      <p className="mt-3 max-w-md text-sm leading-7 text-slate-700">
                         Cari dan pilih mahasiswa sebelum memindai kartu RFID.
                       </p>
                       <button
                         type="button"
                         disabled
-                        className="mt-8 inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white px-5 py-3 text-sm font-semibold text-[color:var(--color-muted)] opacity-70"
+                        className="mt-8 inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white px-5 py-3 text-sm font-semibold text-slate-700 opacity-70"
                       >
                         Menunggu mahasiswa dipilih
                       </button>
@@ -641,7 +641,7 @@ export function RfidCardRegistrationPage({
                       <p className="mt-4 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[color:var(--color-primary)] shadow-[0_14px_28px_rgba(15,23,42,0.08)]">
                         UID Kartu: {scanResult.uid}
                       </p>
-                      <p className="mt-3 text-sm leading-7 text-[color:var(--color-muted)]">
+                      <p className="mt-3 text-sm leading-7 text-slate-700">
                         Terdeteksi pada {scanTimeFormatter.format(new Date(scanResult.scannedAt))}
                         {scanResult.deviceCode ? ` melalui ${scanResult.deviceCode}.` : "."}
                       </p>
@@ -673,7 +673,7 @@ export function RfidCardRegistrationPage({
                           type="button"
                           onClick={resetScanSession}
                           disabled={isLinking}
-                          className="inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white px-5 py-3 text-sm font-semibold text-[color:var(--color-foreground)] transition hover:bg-[color:var(--color-surface-muted)] disabled:cursor-not-allowed disabled:opacity-60"
+                          className="inline-flex items-center justify-center rounded-full border border-[color:var(--color-border)] bg-white px-5 py-3 text-sm font-semibold text-[color:var(--color-foreground)] transition hover:bg-[color:var(--color-surface-muted)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
                         >
                           Batalkan
                         </button>
@@ -681,7 +681,7 @@ export function RfidCardRegistrationPage({
                           type="button"
                           onClick={handleLinkAction}
                           disabled={!canLinkCard}
-                          className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:opacity-60"
+                          className="inline-flex items-center justify-center rounded-full bg-[color:var(--color-primary)] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[color:var(--color-primary-strong)] disabled:cursor-not-allowed disabled:bg-[color:var(--color-surface-muted)] disabled:text-slate-700 disabled:border disabled:border-[color:var(--color-border-strong)]"
                         >
                           {isLinking ? "Menghubungkan..." : "Hubungkan Kartu"}
                         </button>
@@ -701,11 +701,11 @@ export function RfidCardRegistrationPage({
                       <h3 className="mt-8 text-[1.65rem] font-semibold tracking-tight text-[color:var(--color-foreground)]">
                         Menunggu kartu dipindai...
                       </h3>
-                      <p className="mt-3 max-w-lg text-sm leading-7 text-[color:var(--color-muted)]">
+                      <p className="mt-3 max-w-lg text-sm leading-7 text-slate-700">
                         Dekatkan kartu RFID ke perangkat pembaca untuk memulai proses
                         registrasi.
                       </p>
-                      <p className="mt-4 max-w-xl text-sm leading-7 text-[color:var(--color-muted)]">
+                      <p className="mt-4 max-w-xl text-sm leading-7 text-slate-700">
                         {deviceMeta.helper}
                       </p>
 

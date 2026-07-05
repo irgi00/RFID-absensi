@@ -1,6 +1,5 @@
-import { ModulePlaceholder } from "@/components/dashboard/module-placeholder";
-import { modulePlaceholders } from "@/lib/dashboard-config";
+﻿import { RoomsPage as RoomsModulePage } from "@/components/rooms/rooms-page";
 
-export default function RoomsPage() {
-  return <ModulePlaceholder content={modulePlaceholders.rooms} />;
+export default function RoomsRoutePage() {
+  return <RoomsModulePage />;
 }

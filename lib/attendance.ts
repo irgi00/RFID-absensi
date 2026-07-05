@@ -240,7 +240,7 @@ async function getAttendanceHistory(filters: AttendanceFilters) {
   })) satisfies AttendanceHistoryItem[];
 }
 
-function buildAttendanceQueryParts(filters: AttendanceFilters): AttendanceQueryParts {
+export function buildAttendanceQueryParts(filters: AttendanceFilters): AttendanceQueryParts {
   const conditions: string[] = [];
   const params: unknown[] = [];
 

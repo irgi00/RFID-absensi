@@ -1,6 +1,5 @@
-import { ModulePlaceholder } from "@/components/dashboard/module-placeholder";
-import { modulePlaceholders } from "@/lib/dashboard-config";
+import { LecturersPage } from "@/components/lecturers/lecturers-page";
 
-export default function LecturersPage() {
-  return <ModulePlaceholder content={modulePlaceholders.lecturers} />;
+export default function LecturersRoutePage() {
+  return <LecturersPage />;
 }

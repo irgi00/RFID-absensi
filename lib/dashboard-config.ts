@@ -44,16 +44,16 @@ const dashboardNavigationItems: SidebarItem[] = [
     icon: "courses",
   },
   {
+    href: "/dashboard/class-schedules",
+    label: "Jadwal Kuliah",
+    description: "Kelola jadwal perkuliahan yang digunakan oleh sistem absensi RFID.",
+    icon: "schedules",
+  },
+  {
     href: "/dashboard/lecturers",
     label: "Dosen",
     description: "Kelola data dosen pengampu untuk kebutuhan akademik.",
     icon: "lecturers",
-  },
-  {
-    href: "/dashboard/schedules",
-    label: "Jadwal Kuliah",
-    description: "Kelola jadwal kuliah dan waktu absensi setiap sesi.",
-    icon: "schedules",
   },
   {
     href: "/dashboard/attendance",
@@ -73,6 +73,11 @@ const mvpSidebarMenu = new Set([
   "/dashboard",
   "/dashboard/students",
   "/dashboard/rfid-cards",
+  "/dashboard/rooms",
+  "/dashboard/courses",
+  "/dashboard/lecturers",
+  "/dashboard/classes",
+  "/dashboard/class-schedules",
   "/dashboard/attendance",
 ]);
 
@@ -156,3 +161,7 @@ export const modulePlaceholders: Record<string, ModulePlaceholderContent> = {
     focusItems: [],
   },
 };
+
+
+
+
